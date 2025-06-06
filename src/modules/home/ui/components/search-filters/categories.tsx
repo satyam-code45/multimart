@@ -6,12 +6,15 @@ import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import CategoriesSidebar from "./categories-sidebar";
 import { CategoriesGetManyOutput } from "@/modules/categories/types";
+import { useParams } from "next/navigation";
 
 interface Props {
   data: CategoriesGetManyOutput;
 }
 
 const Categories = ({ data }: Props) => {
+
+  const params = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const ViewAllRef = useRef<HTMLDivElement>(null);
@@ -20,7 +23,8 @@ const Categories = ({ data }: Props) => {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const activeCategory = "all";
+  const categoryParam = params.category as string | undefined
+  const activeCategory = categoryParam || "all";
   const activeCategoryIndex = data.findIndex(
     (cat) => cat.slug === activeCategory
   );
@@ -61,11 +65,7 @@ const Categories = ({ data }: Props) => {
 
   return (
     <div className="relative w-full">
-
-      <CategoriesSidebar 
-        open={isSidebarOpen} 
-        onOpenChange={setIsSidebarOpen} 
-      />
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
 
       {/* Hidden div to measure all items */}
       <div
@@ -104,12 +104,14 @@ const Categories = ({ data }: Props) => {
             </div>
           ))}
 
-          <div ref={ViewAllRef} className="shrink-0 mr-3"> 
+          <div ref={ViewAllRef} className="shrink-0 mr-3">
             <Button
               variant="elevated"
               className={cn(
                 "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black ",
-                isActiveCategoryHidden && !isAnyHovered && "bg-white border-primary",
+                isActiveCategoryHidden &&
+                  !isAnyHovered &&
+                  "bg-white border-primary"
               )}
               onClick={() => setIsSidebarOpen(true)}
             >

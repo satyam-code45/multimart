@@ -1,10 +1,14 @@
-import SignUpView from '@/modules/auth/ui/views/sign-up-view'
-import React from 'react'
+import SignUpView from "@/modules/auth/ui/views/sign-up-view";
+import { caller } from "@/trpc/server";
+import { redirect } from "next/navigation";
 
-const SignUp = () => {
-  return (
-    <SignUpView />
-  )
-}
+const SignUp = async () => {
+  const session = await caller.auth.session();
 
-export default SignUp
+  if (session.user) {
+    redirect("/");
+  }
+  return <SignUpView />;
+};
+
+export default SignUp;

@@ -1,7 +1,8 @@
 import { Category } from "@/payload-types";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
-import type { Where } from "payload";
+import type { Sort, Where } from "payload";
 import { z } from "zod";
+import { sortValues } from "../search-params";
 
 export const productRouter = createTRPCRouter({
   getMany: baseProcedure
@@ -10,11 +11,22 @@ export const productRouter = createTRPCRouter({
         category: z.string().nullable().optional(),
         minPrice: z.string().nullable().optional(),
         maxPrice: z.string().nullable().optional(),
+        tags: z.array(z.string()).nullable().optional(),
+        sort: z.enum(sortValues).nullable().optional(),
       })
     )
 
     .query(async ({ ctx, input }) => {
       const where: Where = {};
+      let sort: Sort = "-createdAt";
+
+      if (input.sort === "curated") {
+        sort = "name";
+      } else if (input.sort === "hot_and_new") {
+        sort = "-createdAt";
+      } else if (input.sort === "trending") {
+        sort = "createdAt";
+      }
 
       if (input.minPrice && input.maxPrice) {
         where.price = {
@@ -69,11 +81,22 @@ export const productRouter = createTRPCRouter({
         }
       }
 
+      //checks for the tag
+      if (input.tags && input.tags.length > 0) {
+        where["tags.name"] = {
+          in: input.tags,
+        };
+      }
+
+      console.log("Incoming sort:", input?.sort);
+      console.log("Final sort used:", sort);
+
       const data = await ctx.db.find({
         collection: "products",
         depth: 1, //Populate "category", "image"
         //depth: 0 will only return the category id so depth1 as it will return the entire product
         where,
+        sort,
       });
 
       return data;

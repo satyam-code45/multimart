@@ -1,19 +1,20 @@
-import { initTRPC } from '@trpc/server';
-import { getPayload } from 'payload';
-import { cache } from 'react';
-import config from '@payload-config'
+import { initTRPC, TRPCError } from "@trpc/server";
+import { getPayload } from "payload";
+import { cache } from "react";
+import config from "@payload-config";
+import { headers as getHeaders } from "next/headers";
 
 export const createTRPCContext = cache(async () => {
   /**
    * @see: https://trpc.io/docs/server/context
    */
-  return { userId: 'user_123' };
+  return { userId: "user_123" };
 });
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
-import superjson from "superjson"
+import superjson from "superjson";
 const t = initTRPC.create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
@@ -26,5 +27,27 @@ export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure.use(async ({ next }) => {
   const payload = await getPayload({ config });
 
-  return next({ctx: {db:payload}})
-})
+  return next({ ctx: { db: payload } });
+});
+
+export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
+  const headers = await getHeaders();
+  const session = await ctx.db.auth({ headers });
+
+  if (!session.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Please Log in",
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      session: {
+        ...session,
+        user: session.user,
+      },
+    },
+  });
+});

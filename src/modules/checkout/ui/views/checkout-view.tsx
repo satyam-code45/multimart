@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/trpc/client";
 import { useCart } from "../../hooks/use-cart";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { generateTenantURL } from "@/lib/utils";
@@ -23,6 +23,7 @@ const CheckoutView = ({ tenantSlug }: Props) => {
   const { productIds, clearCart, removeProduct } = useCart(tenantSlug);
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery(
     trpc.checkout.getProducts.queryOptions({
       ids: productIds,
@@ -49,12 +50,19 @@ const CheckoutView = ({ tenantSlug }: Props) => {
 
   useEffect(() => {
     if (states.success) {
-      setstates({success:false, cancel:false})
+      setstates({ success: false, cancel: false });
       clearCart();
-      //TODO: Invalidate libraray
-      router.push("/products");
+      queryClient.invalidateQueries(trpc.library.getMany.infiniteQueryFilter());
+      router.push("/library");
     }
-  }, [states.success, clearCart, router, setstates]);
+  }, [
+    states.success,
+    clearCart,
+    router,
+    setstates,
+    queryClient,
+    trpc.library.getMany,
+  ]);
 
   //if tenant deletes the product but it is still in user cart it will remove it
 

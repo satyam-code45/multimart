@@ -1,5 +1,6 @@
 import { DEFAULT_LIMIT } from "@/contants";
-import LibraryView from "@/modules/library/ui/library-view";
+import LibraryView from "@/modules/library/ui/views/library-view";
+
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 

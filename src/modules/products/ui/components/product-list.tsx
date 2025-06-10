@@ -62,8 +62,8 @@ const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
               price={product.price}
               tenantSlug={product.tenant?.slug}
               tenantImageUrl={product.tenant?.image?.url}
-              reviewCount={5}
-              reviewRating={4}
+              reviewCount={product.reviewCount}
+              reviewRating={product.reviewRating}
             />
           ))}
       </div>

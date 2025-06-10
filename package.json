@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "predev": "payload generate:importmap",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

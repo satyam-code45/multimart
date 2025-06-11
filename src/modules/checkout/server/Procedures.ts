@@ -149,12 +149,12 @@ export const checkoutRouter = createTRPCRouter({
       );
 
       const domain = generateTenantURL(input.tenantSlug);
-
+      
       const checkout = await stripe.checkout.sessions.create(
         {
           customer_email: ctx.session.user.email,
-          success_url: `${domain}/${input.tenantSlug}/checkout?success=true`,
-          cancel_url: `${domain}/${input.tenantSlug}/checkout?cancel=true`,
+          success_url: `${domain}/checkout?success=true`,
+          cancel_url: `${domain}/checkout?cancel=true`,
           mode: "payment",
           line_items: lineItems,
           invoice_creation: {

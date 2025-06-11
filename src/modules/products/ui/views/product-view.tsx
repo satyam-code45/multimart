@@ -103,7 +103,7 @@ const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
 
             <div className="p-6">
               {data.description ? (
-                <p><RichText data={data.description}/></p>
+                <RichText data={data.description}/>
               ) : (
                 <p className="font-medium text-muted-foreground italic">
                   No Description Provided

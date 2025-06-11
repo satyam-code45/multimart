@@ -14,8 +14,9 @@ export const generateAuthCookies = async ({ prefix, value }: Props) => {
     httpOnly: true,
     path: "/",
     //Ensure cross-domain cookie sharing as we will be subrouting so domain may be multimart.com or satyam.multimat.com
-    // sameSite: "none",
-    // domain: ""
+    sameSite: "none",
+    domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN!,
+    secure: process.env.NODE_ENV === "production"
   });
 };
 

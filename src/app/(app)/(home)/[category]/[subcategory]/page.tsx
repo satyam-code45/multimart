@@ -13,6 +13,7 @@ interface Props {
   }>;
   searchParams: Promise<SearchParams>;
 }
+export const dynamic = "force-dynamic";
 
 const Page = async ({ params, searchParams }: Props) => {
   const { subcategory } = await params;
@@ -22,12 +23,12 @@ const Page = async ({ params, searchParams }: Props) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchInfiniteQuery(
-      trpc.products.getMany.infiniteQueryOptions({
-        category: subcategory,
-        ...filters,
-        limit: DEFAULT_LIMIT,
-      })
-    );
+    trpc.products.getMany.infiniteQueryOptions({
+      category: subcategory,
+      ...filters,
+      limit: DEFAULT_LIMIT,
+    })
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

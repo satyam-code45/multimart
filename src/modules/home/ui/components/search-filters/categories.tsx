@@ -13,7 +13,6 @@ interface Props {
 }
 
 const Categories = ({ data }: Props) => {
-
   const params = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
@@ -23,7 +22,7 @@ const Categories = ({ data }: Props) => {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const categoryParam = params.category as string | undefined
+  const categoryParam = params.category as string | undefined;
   const activeCategory = categoryParam || "all";
   const activeCategoryIndex = data.findIndex(
     (cat) => cat.slug === activeCategory
@@ -40,7 +39,7 @@ const Categories = ({ data }: Props) => {
       const viewAllWidth = ViewAllRef.current.offsetWidth;
       const availableWidth = containerWidth - viewAllWidth;
 
-      const items = Array.from(measureRef.current.children[0].children);
+      const items = Array.from(measureRef.current.children[0]?.children ?? []);
 
       let totalWidth = 0;
       let visible = 0;

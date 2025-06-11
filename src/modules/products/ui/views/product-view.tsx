@@ -13,6 +13,7 @@ import { Fragment, useState } from "react";
 // import CartButton from "../components/cart-button";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 const CartButton = dynamic(() => import("../components/cart-button"), {
   ssr: false,
   loading: () => (
@@ -102,7 +103,7 @@ const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
 
             <div className="p-6">
               {data.description ? (
-                <p>{data.description}</p>
+                <p><RichText data={data.description}/></p>
               ) : (
                 <p className="font-medium text-muted-foreground italic">
                   No Description Provided
@@ -129,12 +130,16 @@ const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                       navigator.clipboard.writeText(window.location.href);
                       toast.success("URL copied to clipboard");
                       setTimeout(() => {
-                        setIsCopied(false)
-                      },2000)
+                        setIsCopied(false);
+                      }, 2000);
                     }}
                     disabled={isCopied}
                   >
-                    {isCopied ? <CheckCheck className="text-green-400" />   :<LinkIcon />}
+                    {isCopied ? (
+                      <CheckCheck className="text-green-400" />
+                    ) : (
+                      <LinkIcon />
+                    )}
                   </Button>
                 </div>
                 <p className="text-center font-medium">
@@ -178,3 +183,20 @@ const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
 };
 
 export default ProductView;
+
+export const ProductViewSkeleton = () => {
+  return (
+    <div className="px-4 lg:px-12 py-10">
+      <div className="border rounded-sm bg-white overflow-hidden">
+        <div className="relative aspect-[3.9] border-b">
+          <Image
+            src={"/background.png"}
+            alt={"palcehoder"}
+            fill
+            className="object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};

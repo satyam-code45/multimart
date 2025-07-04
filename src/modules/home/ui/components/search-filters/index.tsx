@@ -6,10 +6,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { DEFAULT_BG_COLOR } from "@/modules/home/constants";
 import BreadcrumbNavigation from "./breadcrumbs-navigaton";
+import UseProductsFilters from "@/modules/products/hooks/use-product-filters";
 
 const SearchFilters = () => {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
+  const [filters, setFilters] = UseProductsFilters();
 
   const params = useParams();
   const categoryParam = params.category as string | undefined;
@@ -32,11 +34,14 @@ const SearchFilters = () => {
       className="px-4 lg:px-12 py-8 border-b flex flex-col gap-4 w-full"
       style={{ backgroundColor: activeCategoryColor }}
     >
-      <SearchInput />
+      <SearchInput
+        defaultValue={filters.search}
+        onChange={(value) => setFilters({ search: value })}
+      />
       <div className="hidden lg:block">
         <Categories data={data} />
       </div>
-      <BreadcrumbNavigation 
+      <BreadcrumbNavigation
         activeCategoryName={activeCategoryName}
         activeCategory={activeCategory}
         activeSubcategoryName={activeSubcategoryName}
